@@ -417,18 +417,193 @@ if($_POST['Commerce'] == 'yes'){
 	$parent_id = get_folder("DataExtension", "Data Extensions");
 	$new_folder = create_folder($parent_id, "dataextension", "_Customers", "_Customers");
 	if($new_folder->StatusCode == "OK"){ 
-		echo "<p>_Customers folder created successfully.</p>";
+		echo "<p>Email folder _Path to Value created successfully.</p>";
 	} else {
-		echo "<p>There was an error creating the _Customers folder: " . $new_folder->StatusMessage . "</p>";
+		echo "<p>There was an error creating the email folder _Path to Value: " . $new_folder->StatusMessage . "</p>";
 	}
 	
 	// update the Common_Subscriber_view DE with the customer-specific fields
 	
 	// create the Order_Headers Data Extension with standard fields
+	$parent_id = get_folder("DataExtension", "_Customers");
+	$oh = create_de("Order_Heads", "order_headers", "DO NOT DELETE. The meta data about a specific order based on Order Number or ID.", $parent_id);
+	$oh->IsSendable = "True";
+	/* set it so that the data extension fields EmailAddress maps to attribute Subscriber Key */
+	$oh->SendableDataExtensionField = new ExactTarget_DataExtensionField();
+	/* This was taken from the Order_Headers example, this might need to be changed to Subscriber Key*/
+	$oh->SendableDataExtensionField->Name = "Email_Address";
+	$oh->SendableSubscriberField  = new ExactTarget_Attribute();
+	$oh->SendableSubscriberField ->Name = "Subscriber Key"; /* This could be Email Address or Subscriber ID */
+	
+	$field1 = new ExactTarget_DataExtensionField();
+	$field1->Name = "Customer_ID";
+	$field1->FieldType = "Number";
+	$field1->IsRequired = "True";
+	
+	$field2 = new ExactTarget_DataExtensionField();
+	$field2->Name = "Order_Number";
+	$field2->FieldType = "Number";
+	$field2->IsRequired = "True"; 
+	$field2->IsPrimaryKey = "True";
+	
+	$field3 = new ExactTarget_DataExtensionField();
+	$field3->Name = "Purchase_Date";
+	$field3->FieldType = "Date";
+	$field3->IsRequired = "True";
+	
+	$field4 = new ExactTarget_DataExtensionField();
+	$field4->Name = "Email_Address";
+	$field4->FieldType = "EmailAddress";
+	$field4->IsRequired = "True";
+	
+	$field5 = new ExactTarget_DataExtensionField();
+	$field5->Name = "Total_Purchase_Value";
+	$field5->FieldType = "Decimal";
+	$field5->Precision = "18";
+	$field5->Scale = "2";
+	$field5->IsRequired = "True";
+	
+	$field6 = new ExactTarget_DataExtensionField();
+	$field6->Name = "Number_of_Items";
+	$field6->FieldType = "Number";
+	$field6->IsRequired = "True";
+	
+	$field7 = new ExactTarget_DataExtensionField();
+	$field7->Name = "First_Name";
+	$field7->FieldType = "Text";
+	$field7->MaxLength = "255";
+	$field7->IsRequired = "True";
+	
+	$field8 = new ExactTarget_DataExtensionField();
+	$field8->Name = "SubscriberKey";
+	$field8->FieldType = "Text";
+	$field8->MaxLength = "100";
+
+	/* add the fields to the data extension object */
+	$oh->Fields[] = $field1;
+	$oh->Fields[] = $field2;
+	$oh->Fields[] = $field3;
+	$oh->Fields[] = $field4;
+	$oh->Fields[] = $field5;
+	$oh->Fields[] = $field6;
+	$oh->Fields[] = $field7;
+	$oh->Fields[] = $field8;
+	
+	$object = new SoapVar($oh, SOAP_ENC_OBJECT, 'DataExtension', "http://exacttarget.com/wsdl/partnerAPI");
+
+	/* create the data extension */
+	$request = new ExactTarget_CreateRequest();
+	$request->Options = NULL;
+	$request->Objects = array($object);
+	$results = $client->Create($request);
+	
+	print_r($results);
 	
 	// create the Order_Details Data Extension with standard fields
+	$parent_id = get_folder("DataExtension", "_Customers");
+	$od = create_de("Order_Heads", "order_headers", "DO NOT DELETE. The meta data about a specific order based on Order Number or ID.", $parent_id);
 	
+	$field1 = new ExactTarget_DataExtensionField();
+	$field1->Name = "Customer_ID";
+	$field1->FieldType = "Number";
+	$field1->IsRequired = "True";
+	
+	$field2 = new ExactTarget_DataExtensionField();
+	$field2->Name = "SKU";
+	$field2->FieldType = "Text";
+	$field2->MaxLength = "255";
+	$field2->IsRequired = "True"; 
+	
+	$field3 = new ExactTarget_DataExtensionField();
+	$field3->Name = "Category";
+	$field3->FieldType = "Text";
+	$field3->MaxLength = "255";
+	$field3->IsRequired = "True";
+	
+	$field4 = new ExactTarget_DataExtensionField();
+	$field4->Name = "Quantity";
+	$field4->FieldType = "Number";
+	$field4->IsRequired = "True";
+	
+	$field5 = new ExactTarget_DataExtensionField();
+	$field5->Name = "Shipping_Date";
+	$field5->FieldType = "Date";
+	$field5->IsRequired = "True";
+	
+	$field6 = new ExactTarget_DataExtensionField();
+	$field6->Name = "Order_Number";
+	$field6->FieldType = "Number";
+	$field6->IsRequired = "True";
+	
+	$field7 = new ExactTarget_DataExtensionField();
+	$field7->Name = "Price";
+	$field7->FieldType = "Decimal";
+	$field7->Precision = "18";
+	$field7->Scale = "2";
+	$field7->IsRequired = "True";
+	
+	$field8 = new ExactTarget_DataExtensionField();
+	$field8->Name = "On_Sale";
+	$field8->FieldType = "Boolean";
+	$field8->DefaultValue = "False";
+	$field8->IsRequired = "True";
+	
+	/* add the fields to the data extension object */
+	$od->Fields[] = $field1;
+	$od->Fields[] = $field2;
+	$od->Fields[] = $field3;
+	$od->Fields[] = $field4;
+	$od->Fields[] = $field5;
+	$od->Fields[] = $field6;
+	$od->Fields[] = $field7;
+	$od->Fields[] = $field8;
+	
+	$object = new SoapVar($od, SOAP_ENC_OBJECT, 'DataExtension', "http://exacttarget.com/wsdl/partnerAPI");
+
+	/* create the data extension */
+	$request = new ExactTarget_CreateRequest();
+	$request->Options = NULL;
+	$request->Objects = array($object);
+	$results = $client->Create($request);
+	
+	print_r($results);
 	// create the Import Activity to Order_Headers with order_headers%%Year%%-%%month%%-%%day%%.csv
+	//Allow errors during the import (optional)
+	$importdef->AllowErrors = true; 
+
+	// Specify the Data Extension (required)
+	$de = new ExactTarget_DataExtension();
+	$de->Name = "Order Headers";
+	$de->CustomerKey = "order_headers";
+	$lo = new SoapVar($de, SOAP_ENC_OBJECT, 'DataExtension', "http://exacttarget.com/wsdl/partnerAPI");
+	$importdef->DestinationObject = $lo;
+   
+	// Specify the File Transfer Location (where is the file coming from?) (required)  
+	$ftl= new ExactTarget_FileTransferLocation();
+	$ftl->CustomerKey = "ExactTarget Enhanced FTP";
+	$importdef->RetrieveFileTransferLocation = $ftl;
+   
+	// Specify the UpdateType (optional)  
+	$importdef->UpdateType  = ExactTarget_ImportDefinitionUpdateType::AddAndUpdate;
+   
+	// Map fields (required)
+	$importdef->FieldMappingType = ExactTarget_ImportDefinitionFieldMappingType::InferFromColumnHeadings;
+
+	// Specify the File naming Specifications
+	$importdef->FileSpec = "order_headers%%Year%%-%%month%%-%%day%%.csv";
+	
+	// Specify the FileType
+	$importdef->FileType = ExactTarget_FileType::CSV;
+
+	// Create the Import Definition 
+	$object = new SoapVar($importdef, SOAP_ENC_OBJECT, 'ImportDefinition', "http://exacttarget.com/wsdl/partnerAPI");
+	$request = new ExactTarget_CreateRequest();
+	$request->Options = NULL;
+	$request->Objects = array($object);
+
+	// Print out the results
+	$results = $client->Create($request);
+	print_r($results);
 	
 	// create the Import Activity to Order_Details with order_details%%Year%%-%%month%%-%%day%%.csv
 	
