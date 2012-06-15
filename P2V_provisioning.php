@@ -414,6 +414,13 @@ if($_POST['Welcome'] == 'yes'){
 
 if($_POST['Commerce'] == 'yes'){
 	// create the Data Extension folder "_Customers"
+	$parent_id = get_folder("DataExtension", "Data Extensions");
+	$new_folder = create_folder($parent_id, "dataextension", "_Customers", "_Customers");
+	if($new_folder->StatusCode == "OK"){ 
+		echo "<p>_Customers folder created successfully.</p>";
+	} else {
+		echo "<p>There was an error creating the _Customers folder: " . $new_folder->StatusMessage . "</p>";
+	}
 	
 	// update the Common_Subscriber_view DE with the customer-specific fields
 	
