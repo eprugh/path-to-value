@@ -258,6 +258,8 @@ if($_POST['AllSubscribersDE'] == "yes"){
 	$request->Objects = array($object);
 	$results = $client->Create($request);
 	
+	print_r($results);
+	
 }
 
 if($_POST['AllProgramMembersDE'] == "yes"){	
@@ -386,7 +388,6 @@ if($_POST['ListMembersDE'] == "yes"){
 	- Create query that pulls Program_Members:
 		
 	
-	
 	**************************************/
 	
 }
@@ -394,9 +395,20 @@ if($_POST['ListMembersDE'] == "yes"){
 
 // this is the Path to Value Welcome Program
 if($_POST['Welcome'] == 'yes'){	
-	// create the email folder "Welcome Program"
+	// create the email folder "Welcome Program" under the _Path to Value folder
 	
 	// create the Data Filters 1, 2, and 3 based upon X days, X+Y days, and Z days
+	//use All_Subscribers and Opt_In_Date
+	
+	// create a Data Filter against "All_Program_Members" where "Program_Name = 'Welcome_Program' and Last_Program_Email_Send_Date is after 'today minus 14'"
+	
+	// create the SendClassification "Welcome_Program"
+	
+	// create the holder shells for the emails (Blank HTML) for Welcome.E1, Welcome.E2, Welcome.E3
+	
+	// create the folder within User-initiated sends for Welcome
+	
+	// create 3x User-initiated Sends that use the Welcome_Program Send Classification and the Welcome.E1, ... emails
 	
 }
 
@@ -405,6 +417,93 @@ if($_POST['Commerce'] == 'yes'){
 	
 	// update the Common_Subscriber_view DE with the customer-specific fields
 	
+	// create the Order_Headers Data Extension with standard fields
+	
+	// create the Order_Details Data Extension with standard fields
+	
+	// create the Import Activity to Order_Headers with order_headers%%Year%%-%%month%%-%%day%%.csv
+	
+	// create the Import Activity to Order_Details with order_details%%Year%%-%%month%%-%%day%%.csv
+	
+	// now create the SQL query to aggregate & derive the last purchase data
+	/*
+	SQL:
+	SELECT oh.Customer_ID, oh.Email_Address, oh.Email_Address as SubscriberKey,
+	Sum(Total_Purchase_Value) as Total_Spend, Avg(Total_Purchase_Value) as Avg_Spend_per_Purchase,
+	Sum(Number_of_Items) / Count(oh.Customer_ID) as Avg_Items_per_Purchase, Max(Purchase_Date) as Last_Purchase_Date,
+	Count(oh.Customer_ID) as Number_of_Purchases,
+	Round(DateDiff(day, Min(Purchase_Date), Max(Purchase_Date)) / Count(oh.Customer_ID), 0) as Avg_Days_Between_Purchase,
+	Is_A_Customer = 1
+
+	from Common_Subscriber_View csv
+	Left Outer Join Order_Headers oh
+	On oh.Email_Address = csv.Email_Address
+
+	Group By oh.Customer_ID, oh.Email_Address
+	*/
+	
+	// now create a sample filter or two using the Common_Subscriber_View
+	// Last_Purchase_Date is after 'today minus 90 days' and Number_of_Purchases > 1 and Total_Spend > 100
+	
+	
+}
+
+if($_POST['DemoAccount'] == 'yes'){
+	// create a new "_Archive" folder
+	$parent_id = get_folder("email", "my emails");
+	$new_folder = create_folder($parent_id, "email", "_Archive", "_Archive");
+	
+	////////////////////////////////////
+	// create a new list called "Seed List"
+	////////////////////////////////////
+    $list = new ExactTarget_List();
+    $list->ListName = "Seed List";
+    $object = new SoapVar($list, SOAP_ENC_OBJECT, 'List', "http://exacttarget.com/wsdl/partnerAPI");
+
+	/* Create the Create Request */
+    $request = new ExactTarget_CreateRequest();
+    $request->Options = NULL;
+    $request->Objects = array($object);
+
+	/* Execute the Create Request */
+    $results = $client->Create($request);
+	
+	////////////////////////////////////
+	// add a new subscriber based on the test email supplied
+	////////////////////////////////////
+	$test_email = $_POST['TestEmail'];
+	
+	$subscriber = new ExactTarget_Subscriber();
+	$subscriber->SubscriberKey = $test_email; // optional depending on account configuration
+	$subscriber->EmailAddress = $test_email; // required
+	//$subscriber->Lists[] = 
+	
+	/* Create the subscriber */
+	$object = new SoapVar($subscriber, SOAP_ENC_OBJECT, 'Subscriber', "http://exacttarget.com/wsdl/partnerAPI");
+	$request = new ExactTarget_CreateRequest();
+	$request->Options = NULL;
+	$request->Objects = array($object);
+	$results = $client->Create($request);
+	
+	////////////////////////////////////
+	// add an HTML email in the _Archive folder with AMPscript to add a random number of records to All_Subscribers
+	/*****
+	AMPscript is...
+	
+	%%[
+	// generate a random number of net new subscribers
+	SET @number = Random(100, 1000)
+	
+	Write(Concat(@number, " subscribers added."))
+	
+	// loop through all of the random email addresses to input the date
+	FOR @i = 1 to RowCount(@number) DO
+		UpsertDE("All_Subscribers", 1, "Email_Address", Concat("email", Multiply(Random(100,10000), @number), "@bh.exacttarget.com"), "Opt_In_Date", NOW())
+	NEXT @i
+	]%%
+	
+	*/
+	////////////////////////////////////
 	
 }
 

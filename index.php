@@ -39,6 +39,9 @@
 			<div>
 				<input type="checkbox" name="Commerce" value="yes" id="commerce_program" /> <label for="commerce_program">Commerce Program</label>
 			</div>
+			<div>
+				<input type="checkbox" name="DemoAccount" value="yes" id="DemoAccount" /> <label for="DemoAccount">Sales Demo Account (populate with data)</label>
+			</div>
 		</div>
 		<p><input type="submit" value="Continue &rarr;"></p>
 	</form>
