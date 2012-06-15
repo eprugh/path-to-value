@@ -1,0 +1,22 @@
+**************************************************************************************************
+**************************************************************************************************
+
+This is the script in PHP to provision & build a new ExactTarget account
+leveraging our Data Extension framework and the Common Subscriber View.
+
+Additionally, you can see how we provision the Path to Value programs like:
+- Welcome Program
+- Engagement attributes (Last Send Date, Last Open Date, etc.)
+- Commerce data setup
+- Setting up & building derived fields
+- Setting up an automated "demo" email to write new subscribers to a DE every day
+
+This script is based upon a shift in implementing ExactTarget customers on a common data framework
+incorporating many relational data sources within a pre-defined data schema.
+
+The pre-defined data schema actually allows for more rapid product development against tools for
+custom reports, Audience Builder, Report Builder, etc.
+
+
+**************************************************************************************************
+**************************************************************************************************
