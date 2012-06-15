@@ -239,11 +239,16 @@ if($_POST['AllSubscribersDE'] == "yes"){
 	$field3->Name = "First_Name";
 	$field3->FieldType = "Text";
 	$field3->MaxLength = "255";
+	
+	$field4 = new ExactTarget_DataExtensionField();
+	$field4->Name = "Opt_In_Date";
+	$field4->FieldType = "Date";
 
 	/* add the fields to the data extension object */
 	$as->Fields[] = $field1;
 	$as->Fields[] = $field2;
 	$as->Fields[] = $field3;
+	$as->Fields[] = $field4;
 	
 	$object = new SoapVar($as, SOAP_ENC_OBJECT, 'DataExtension', "http://exacttarget.com/wsdl/partnerAPI");
 
