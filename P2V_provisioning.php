@@ -426,7 +426,7 @@ if($_POST['Commerce'] == 'yes'){
 	
 	// create the Order_Headers Data Extension with standard fields
 	$parent_id = get_folder("DataExtension", "_Customers");
-	$oh = create_de("Order_Heads", "order_headers", "DO NOT DELETE. The meta data about a specific order based on Order Number or ID.", $parent_id);
+	$oh = create_de("Order_Headers", "order_headers", "DO NOT DELETE. The meta data about a specific order based on Order Number or ID.", $parent_id);
 	$oh->IsSendable = "True";
 	/* set it so that the data extension fields EmailAddress maps to attribute Subscriber Key */
 	$oh->SendableDataExtensionField = new ExactTarget_DataExtensionField();
@@ -501,7 +501,7 @@ if($_POST['Commerce'] == 'yes'){
 	
 	// create the Order_Details Data Extension with standard fields
 	$parent_id = get_folder("DataExtension", "_Customers");
-	$od = create_de("Order_Heads", "order_headers", "DO NOT DELETE. The meta data about a specific order based on Order Number or ID.", $parent_id);
+	$od = create_de("Order_Detials", "order_details", "DO NOT DELETE. The meta data about a specific order based on Order Number or ID.", $parent_id);
 	
 	$field1 = new ExactTarget_DataExtensionField();
 	$field1->Name = "Customer_ID";
