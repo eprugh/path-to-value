@@ -426,7 +426,7 @@ if($_POST['Commerce'] == 'yes'){
 	
 	// create the Order_Headers Data Extension with standard fields
 	$parent_id = get_folder("DataExtension", "_Customers");
-	$oh = create_de("Order_Headers", "order_headers", "DO NOT DELETE. The meta data about a specific order based on Order Number or ID.", $parent_id);
+	$oh = create_de("Order_Heads", "order_headers", "DO NOT DELETE. The meta data about a specific order based on Order Number or ID.", $parent_id);
 	$oh->IsSendable = "True";
 	/* set it so that the data extension fields EmailAddress maps to attribute Subscriber Key */
 	$oh->SendableDataExtensionField = new ExactTarget_DataExtensionField();
@@ -568,12 +568,15 @@ if($_POST['Commerce'] == 'yes'){
 	
 	print_r($results);
 	// create the Import Activity to Order_Headers with order_headers%%Year%%-%%month%%-%%day%%.csv
+	/* Create Import Definition Object */
+	$importdef = new ExactTarget_ImportDefinition();
+	$importdef->Name = "Order Headers";
+   
 	//Allow errors during the import (optional)
 	$importdef->AllowErrors = true; 
 
 	// Specify the Data Extension (required)
 	$de = new ExactTarget_DataExtension();
-	$de->Name = "Order Headers";
 	$de->CustomerKey = "order_headers";
 	$lo = new SoapVar($de, SOAP_ENC_OBJECT, 'DataExtension', "http://exacttarget.com/wsdl/partnerAPI");
 	$importdef->DestinationObject = $lo;
