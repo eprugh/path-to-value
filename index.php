@@ -16,7 +16,22 @@
 		</div>
 		<div id="programs">
 			<div>
-				<input type="checkbox" name="Activation" value="yes" id="activation" /> <label for="activation">Account Activation &amp; Setup</label>
+				<input type="checkbox" name="_SubscribersFolder" value="yes" id="subscribers_de" /> <label for="subscribers_de">_Subscribers DE Folder</label>
+			</div>
+			<div>
+				<input type="checkbox" name="EmailFolder" value="yes" id="p2v_emails_folder" /> <label for="p2v_emails_folder">"_Path to Value" Emails Folder</label>
+			</div>
+			<div>
+				<input type="checkbox" name="Common_Subscriber_View_DE" value="yes" id="csv" /> <label for="csv">Common Subscriber View</label>
+			</div>
+			<div>
+				<input type="checkbox" name="AllSubscribersDE" value="yes" id="AllSubscribersDE" /> <label for="AllSubscribersDE">All Subscribers Data Extension</label>
+			</div>
+			<div>
+				<input type="checkbox" name="AllProgramMembersDE" value="yes" id="AllProgramMembersDE" /> <label for="AllProgramMembersDE">All Program Members</label>
+			</div>
+			<div>
+				<input type="checkbox" name="ListMembersDE" value="yes" id="ListMembersDE" /> <label for="ListMembersDE">List Members</label>
 			</div>
 			<div>
 				<input type="checkbox" name="Welcome" value="yes" id="welcome_program" /> <label for="welcome_program">Welcome Program</label>

@@ -85,9 +85,10 @@ function create_folder ($parent_id, $content_type, $key, $name) {
 	return $results->Results;
 }
 
+$client = call_api();
+
 // this script should be run on ANY ExactTarget account requiring implementation
-if($_POST['Activation'] == "yes"){
-	$client = call_api();
+if($_POST['_SubscribersFolder'] == "yes"){
 	
 	// create the Data Extension folder "_Subscribers"
 	$parent_id = get_folder("DataExtension", "Data Extensions");
@@ -97,6 +98,10 @@ if($_POST['Activation'] == "yes"){
 	} else {
 		echo "<p>There was an error creating the _Subscribers folder: " . $new_folder->StatusMessage . "</p>";
 	}
+	
+}
+
+if($_POST['EmailFolder'] == "yes"){
 		
 	// create the email folder "_Path to Value"
 	$parent_id = get_folder("Email", "my emails");
@@ -107,9 +112,9 @@ if($_POST['Activation'] == "yes"){
 		echo "<p>There was an error creating the email folder _Path to Value: " . $new_folder->StatusMessage . "</p>";
 	}
 	
+}
 	
-	
-	
+if($_POST['Common_Subscriber_View_DE'] == "yes"){
 	
 	/****************************************** 
 	******************************************
@@ -199,7 +204,9 @@ if($_POST['Activation'] == "yes"){
 	$request->Objects = array($object);
 	$results = $client->Create($request);
 	
-	
+}
+
+if($_POST['AllSubscribersDE'] == "yes"){
 	
 	
 	/****************************************** 
@@ -246,8 +253,9 @@ if($_POST['Activation'] == "yes"){
 	$request->Objects = array($object);
 	$results = $client->Create($request);
 	
-	
-	
+}
+
+if($_POST['AllProgramMembersDE'] == "yes"){	
 	
 	/****************************************** 
 	******************************************
@@ -307,7 +315,8 @@ if($_POST['Activation'] == "yes"){
 	$request->Objects = array($object);
 	$results = $client->Create($request);
 	
-	
+}
+if($_POST['ListMembersDE'] == "yes"){
 	
 	/****************************************** 
 	******************************************
@@ -365,6 +374,15 @@ if($_POST['Activation'] == "yes"){
 	$request->Options = NULL;
 	$request->Objects = array($object);
 	$results = $client->Create($request);
+	
+	/***************************************
+	
+	Additional steps that need to happen...
+	- Create query that pulls Program_Members:
+		
+	
+	
+	**************************************/
 	
 }
 
