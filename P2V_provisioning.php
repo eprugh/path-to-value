@@ -491,6 +491,8 @@ if($_POST['Commerce'] == 'yes'){
 	/* Create Import Definition Object */
 	$importdef = new ExactTarget_ImportDefinition();
 	$importdef->Name = "Order Headers";
+	$importdef->CustomerKey = "order_headers";
+	$importdef->Description = "DO NOT DELETE. Import for Order Headers Data Extension for Commerce integration."
    
 	//Allow errors during the import (optional)
 	$importdef->AllowErrors = true; 
@@ -532,6 +534,8 @@ if($_POST['Commerce'] == 'yes'){
 		/* Create Import Definition Object */
 	$importdef = new ExactTarget_ImportDefinition();
 	$importdef->Name = "Order Details";
+	$importdef->CustomerKey = "order_details";
+	$importdef->Description = "DO NOT DELETE. Import for Order Details Data Extension for Commerce integration."
    
 	//Allow errors during the import (optional)
 	$importdef->AllowErrors = true; 
