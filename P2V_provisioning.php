@@ -346,7 +346,7 @@ if($_POST['Commerce'] == 'yes'){
 	
 	// create the Order_Headers Data Extension with standard fields
 	$parent_id = get_folder("DataExtension", "_Customers");
-	$oh = create_de("Order_Heads", "order_headers", "DO NOT DELETE. The meta data about a specific order based on Order Number or ID.", $parent_id);
+	$oh = create_de("Order_Headers", "order_headers", "DO NOT DELETE. The meta data about a specific order based on Order Number or ID.", $parent_id);
 	$oh->IsSendable = "True";
 	/* set it so that the data extension fields EmailAddress maps to attribute Subscriber Key */
 	$oh->SendableDataExtensionField = new ExactTarget_DataExtensionField();
@@ -529,6 +529,45 @@ if($_POST['Commerce'] == 'yes'){
 	print_r($results);
 	
 	// create the Import Activity to Order_Details with order_details%%Year%%-%%month%%-%%day%%.csv
+		/* Create Import Definition Object */
+	$importdef = new ExactTarget_ImportDefinition();
+	$importdef->Name = "Order Details";
+   
+	//Allow errors during the import (optional)
+	$importdef->AllowErrors = true; 
+
+	// Specify the Data Extension (required)
+	$de = new ExactTarget_DataExtension();
+	$de->CustomerKey = "order_details";
+	$lo = new SoapVar($de, SOAP_ENC_OBJECT, 'DataExtension', "http://exacttarget.com/wsdl/partnerAPI");
+	$importdef->DestinationObject = $lo;
+   
+	// Specify the File Transfer Location (where is the file coming from?) (required)  
+	$ftl= new ExactTarget_FileTransferLocation();
+	$ftl->CustomerKey = "ExactTarget Enhanced FTP";
+	$importdef->RetrieveFileTransferLocation = $ftl;
+   
+	// Specify the UpdateType (optional)  
+	$importdef->UpdateType  = ExactTarget_ImportDefinitionUpdateType::AddAndUpdate;
+   
+	// Map fields (required)
+	$importdef->FieldMappingType = ExactTarget_ImportDefinitionFieldMappingType::InferFromColumnHeadings;
+
+	// Specify the File naming Specifications
+	$importdef->FileSpec = "order_details%%Year%%-%%month%%-%%day%%.csv";
+	
+	// Specify the FileType
+	$importdef->FileType = ExactTarget_FileType::CSV;
+
+	// Create the Import Definition 
+	$object = new SoapVar($importdef, SOAP_ENC_OBJECT, 'ImportDefinition', "http://exacttarget.com/wsdl/partnerAPI");
+	$request = new ExactTarget_CreateRequest();
+	$request->Options = NULL;
+	$request->Objects = array($object);
+
+	// Print out the results
+	$results = $client->Create($request);
+	print_r($results);
 	
 	// now create the SQL query to aggregate & derive the last purchase data
 	/*
