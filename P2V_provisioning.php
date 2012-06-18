@@ -581,7 +581,7 @@ if($_POST['Commerce'] == 'yes'){
 	$qd->TargetUpdateType = "Update";                                   
 	$qd->TargetType = "DE";
 	
-	var query = "SELECT oh.Customer_ID, oh.Email_Address, oh.Email_Address as SubscriberKey,";
+	var query = "select oh.Customer_ID, oh.Email_Address, oh.Email_Address as SubscriberKey,";
 	query += "Sum(Total_Purchase_Value) as Total_Spend, Avg(Total_Purchase_Value) as Avg_Spend_per_Purchase,";
 	query += "Sum(Number_of_Items) / Count(oh.Customer_ID) as Avg_Items_per_Purchase, Max(Purchase_Date) as Last_Purchase_Date,";
 	query += "Count(oh.Customer_ID) as Number_of_Purchases,";
