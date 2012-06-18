@@ -574,6 +574,40 @@ if($_POST['Commerce'] == 'yes'){
 	print_r($results);
 	
 	// now create the SQL query to aggregate & derive the last purchase data
+	$qd = new ExactTarget_QueryDefinition();
+	$qd->Name = "1. Sums, Counts, Average";
+	//$qd->CustomerKey = "TemporaryQueryCustomerKey";
+	$qd->Description = "API_Query";
+	$qd->TargetUpdateType = "Update";                                   
+	$qd->TargetType = "DE";
+	
+	var query = "SELECT oh.Customer_ID, oh.Email_Address, oh.Email_Address as SubscriberKey,";
+	query += "Sum(Total_Purchase_Value) as Total_Spend, Avg(Total_Purchase_Value) as Avg_Spend_per_Purchase,";
+	query += "Sum(Number_of_Items) / Count(oh.Customer_ID) as Avg_Items_per_Purchase, Max(Purchase_Date) as Last_Purchase_Date,";
+	query += "Count(oh.Customer_ID) as Number_of_Purchases,";
+	query += "Round(DateDiff(day, Min(Purchase_Date), Max(Purchase_Date)) / Count(oh.Customer_ID), 0) as Avg_Days_Between_Purchase,";
+	query += "Is_A_Customer = 1";
+	query += "\nfrom Common_Subscriber_View csv";
+	query += "\nLeft Outer Join Order_Headers oh";
+	query += "\nOn oh.Email_Address = csv.Email_Address";
+	query += "\nGroup By oh.Customer_ID, oh.Email_Address";
+	
+	$qd->QueryText = query;                    
+	$ibo = new ExactTarget_InteractionBaseObject();
+	$ibo->CustomerKey = "common_subscriber_view";
+	$ibo->Name = "Common_Subscriber_View";                                                               
+	$qd->DataExtensionTarget = $ibo;                                                                                                      
+
+	$object = new SoapVar($qd, SOAP_ENC_OBJECT, 'QueryDefinition', "http://exacttarget.com/wsdl/partnerAPI");
+
+	//SOAP_ENC_OBJECT
+	$request = new ExactTarget_CreateRequest();
+	$request->Options = NULL;
+	$request->Objects = array($object);
+
+	$results = $client->Create($request);
+	print_r($p_results);
+	
 	/*
 	SQL:
 	SELECT oh.Customer_ID, oh.Email_Address, oh.Email_Address as SubscriberKey,
@@ -592,7 +626,52 @@ if($_POST['Commerce'] == 'yes'){
 	
 	// now create a sample filter or two using the Common_Subscriber_View
 	// Last_Purchase_Date is after 'today minus 90 days' and Number_of_Purchases > 1 and Total_Spend > 100
+	$fd = new ExactTarget_FilterDefinition(); 
+	$fd->Name = "My Filter Name"; 
+	$fd->CustomerKey = "my_filter_key"; 
+	/* Needs to be updated. */
+	$fd->Description = "DO NOT DELETE. Update this."; 
+	DataExtension fde = new DataExtension();
+	fde.CustomerKey = "common_subscriber_view"; // External key of data extension
+	$fd->DataSource = fde;
 	
+	
+	/* Still needs work
+	$sf_1 = new ExactTarget_SimpleFilterPart(); 
+	$sf_1->Property = "Last_Purchase_Date"; 
+	$sf_1->SimpleOperator = ExactTarget_SimpleOperators::greaterThan; 
+	$sf_1->Value = "Nick"; 
+	$sf_1 = new SoapVar($sf_1, SOAP_ENC_OBJECT, 'SimpleFilterPart', "http://exacttarget.com/wsdl/partnerAPI");*/
+	
+	$sf_2 = new ExactTarget_SimpleFilterPart(); 
+	$sf_2->Property = "Number_of_Purchases"; 
+	$sf_2->SimpleOperator = ExactTarget_SimpleOperators::greaterThan; 
+	$sf_2->Value = "1"; 
+	$sf_2 = new SoapVar($sf_2, SOAP_ENC_OBJECT, 'SimpleFilterPart', "http://exacttarget.com/wsdl/partnerAPI");
+
+	$sf_3 = new ExactTarget_SimpleFilterPart(); 
+	$sf_3->Property = "Total_Spend"; 
+	$sf_3->SimpleOperator = ExactTarget_SimpleOperators::greaterThan; 
+	$sf_3->Value = "100"; 
+	$sf_3 = new SoapVar($sf_3, SOAP_ENC_OBJECT, 'SimpleFilterPart', "http://exacttarget.com/wsdl/partnerAPI");
+
+	$cf = new ExactTarget_ComplexFilterPart(); 
+	/*$cf->LeftOperand = $sf_1; 
+	$cf->LogicalOperator = ExactTarget_LogicalOperators::_AND; */
+	$cf->RightOperand = $sf_2; 
+	$cf->LogicalOperator = ExactTarget_LogicalOperators::_AND; 
+	$cf->RightOperand = $sf_3; 
+	$cf = new SoapVar($cf, SOAP_ENC_OBJECT, 'ComplexFilterPart', "http://exacttarget.com/wsdl/partnerAPI"); 
+	
+	$fd->DataFilter = $cf; 
+
+	$object = new SoapVar($fd, SOAP_ENC_OBJECT, 'FilterDefinition', "http://exacttarget.com/wsdl/partnerAPI");
+
+	$request = new ExactTarget_CreateRequest(); 
+	$request->Options = NULL; 
+	$request->Objects = array($object);   
+	$results = $client->Create($request);
+	print_r($p_results);
 	
 }
 
