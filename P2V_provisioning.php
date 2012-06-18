@@ -581,21 +581,20 @@ if($_POST['Commerce'] == 'yes'){
 	$qd->TargetUpdateType = "Update";                                   
 	$qd->TargetType = "DE";
 	
-	var query = "select oh.Customer_ID, oh.Email_Address, oh.Email_Address as SubscriberKey,";
-	query += "Sum(Total_Purchase_Value) as Total_Spend, Avg(Total_Purchase_Value) as Avg_Spend_per_Purchase,";
-	query += "Sum(Number_of_Items) / Count(oh.Customer_ID) as Avg_Items_per_Purchase, Max(Purchase_Date) as Last_Purchase_Date,";
-	query += "Count(oh.Customer_ID) as Number_of_Purchases,";
-	query += "Round(DateDiff(day, Min(Purchase_Date), Max(Purchase_Date)) / Count(oh.Customer_ID), 0) as Avg_Days_Between_Purchase,";
-	query += "Is_A_Customer = 1";
-	query += "\nfrom Common_Subscriber_View csv";
-	query += "\nLeft Outer Join Order_Headers oh";
-	query += "\nOn oh.Email_Address = csv.Email_Address";
-	query += "\nGroup By oh.Customer_ID, oh.Email_Address";
+	$query = "select oh.Customer_ID, oh.Email_Address, oh.Email_Address as SubscriberKey,";
+	$query += "Sum(Total_Purchase_Value) as Total_Spend, Avg(Total_Purchase_Value) as Avg_Spend_per_Purchase,";
+	$query += "Sum(Number_of_Items) / Count(oh.Customer_ID) as Avg_Items_per_Purchase, Max(Purchase_Date) as Last_Purchase_Date,";
+	$query += "Count(oh.Customer_ID) as Number_of_Purchases,";
+	$query += "Round(DateDiff(day, Min(Purchase_Date), Max(Purchase_Date)) / Count(oh.Customer_ID), 0) as Avg_Days_Between_Purchase,";
+	$query += "Is_A_Customer = 1";
+	$query += "\nfrom Common_Subscriber_View csv";
+	$query += "\nLeft Outer Join Order_Headers oh";
+	$query += "\nOn oh.Email_Address = csv.Email_Address";
+	$query += "\nGroup By oh.Customer_ID, oh.Email_Address";
 	
-	$qd->QueryText = query;                    
-	$ibo = new ExactTarget_InteractionBaseObject();
+	$qd->QueryText = $query;                    
+	$ibo = new ExactTarget_DataExtension();
 	$ibo->CustomerKey = "common_subscriber_view";
-	$ibo->Name = "Common_Subscriber_View";                                                               
 	$qd->DataExtensionTarget = $ibo;                                                                                                      
 
 	$object = new SoapVar($qd, SOAP_ENC_OBJECT, 'QueryDefinition', "http://exacttarget.com/wsdl/partnerAPI");
@@ -631,9 +630,9 @@ if($_POST['Commerce'] == 'yes'){
 	$fd->CustomerKey = "my_filter_key"; 
 	/* Needs to be updated. */
 	$fd->Description = "DO NOT DELETE. Update this."; 
-	DataExtension fde = new DataExtension();
-	fde.CustomerKey = "common_subscriber_view"; // External key of data extension
-	$fd->DataSource = fde;
+	$fde = new ExactTarget_DataExtension();
+	$fde->CustomerKey = "common_subscriber_view"; // External key of data extension
+	$fd->DataSource = $fde;
 	
 	
 	/* Still needs work */
